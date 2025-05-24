@@ -1,8 +1,14 @@
-# Use an official Nginx image
-FROM nginx:alpine
-
-# Copy static files into nginx html directory
-COPY . /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
+# Use an official Node.js runtime as a base image
+FROM node:18
+# Set the working directory inside the container
+WORKDIR /app
+# Copy the application files
+COPY . .
+# Install dependencies
+RUN npm init -y
+RUN npm install
+RUN npm install express
+# Expose the application port
+EXPOSE 8082
+# Command to run the application
+CMD ["node", "index.js"]
