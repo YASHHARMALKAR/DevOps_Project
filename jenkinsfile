@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Anishkarlekar2002/DevOpsPrac5_Q5.git'
+                git 'https://github.com/YASHHARMALKAR/DevOps_Project.git'
             }
         }
 
