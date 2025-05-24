@@ -1,39 +1,14 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/YASHHARMALKAR/DevOps_Project.git'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                bat '''
-                set DOCKER_BUILDKIT=0
-                docker build -t devops-node-app:latest .
-                '''
-            }
-        }
-
-        stage('Run Docker Container') {
-            steps {
-                bat '''
-                docker stop devopscontainer || exit 0
-                docker rm devopscontainer || exit 0
-                docker run -d -p 8082:4000 --name devopscontainer devops-node-app:latest
-                '''
-            }
-        }
-    }
-
-    post {
-        success {
-            echo '🚀 Deployment successful!'
-        }
-        failure {
-            echo '❌ Deployment failed.'
-        }
-    }
-}
+# Use an official Node.js runtime as a base image
+FROM node:18
+# Set the working directory inside the container
+WORKDIR /app
+# Copy the application files
+COPY . .
+# Install dependencies
+RUN npm init -y
+RUN npm install
+RUN npm install express
+# Expose the application port
+EXPOSE 8082
+# Command to run the application
+CMD ["node", "index.js"]
