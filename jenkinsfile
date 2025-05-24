@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
                 git 'https://github.com/YASHHARMALKAR/DevOps_Project.git'
             }
@@ -10,20 +10,19 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    // On Windows agents, use 'bat'
-                    bat 'set DOCKER_BUILDKIT=0 && docker build -t devops-node-app:latest .'
-                }
+                bat '''
+                set DOCKER_BUILDKIT=0
+                docker build -t devops-node-app:latest .
+                '''
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                // First, stop and remove any old container (optional but recommended)
                 bat '''
-                    docker stop devopscontainer || exit 0
-                    docker rm devopscontainer || exit 0
-                    docker run -d -p 8082:4000 --name devopscontainer devops-node-app:latest
+                docker stop devopscontainer || exit 0
+                docker rm devopscontainer || exit 0
+                docker run -d -p 8082:3000 --name devopscontainer devops-node-app:latest
                 '''
             }
         }
@@ -31,7 +30,7 @@ pipeline {
 
     post {
         success {
-            echo '🚀 Deployment successful!'
+            echo '✅ Deployment successful.'
         }
         failure {
             echo '❌ Deployment failed.'
