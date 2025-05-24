@@ -1,14 +1,20 @@
-# Use an official Node.js runtime as a base image
+# Use an official Node.js runtime as the base image
 FROM node:18
+
 # Set the working directory inside the container
 WORKDIR /app
-# Copy the application files
-COPY . .
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
 # Install dependencies
-RUN npm init -y
 RUN npm install
-RUN npm install express
-# Expose the application port
-EXPOSE 8082
-# Command to run the application
-CMD ["node", "index.js"]
+
+# Copy the rest of your application code
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 4000
+
+# Start the application
+CMD ["npm", "start"]
