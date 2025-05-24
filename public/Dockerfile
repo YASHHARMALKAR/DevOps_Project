@@ -1,20 +1,39 @@
-# Use an official Node.js runtime as the base image
-FROM node:18
+pipeline {
+    agent any
 
-# Set the working directory inside the container
-WORKDIR /app
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/Anishkarlekar2002/DevOpsPrac5_Q5.git'
+            }
+        }
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
+        stage('Build Docker Image') {
+            steps {
+                bat '''
+                set DOCKER_BUILDKIT=0
+                docker build -t devops-node-app:latest .
+                '''
+            }
+        }
 
-# Install dependencies
-RUN npm install
+        stage('Run Docker Container') {
+            steps {
+                bat '''
+                docker stop devopscontainer || exit 0
+                docker rm devopscontainer || exit 0
+                docker run -d -p 8082:4000 --name devopscontainer devops-node-app:latest
+                '''
+            }
+        }
+    }
 
-# Copy the rest of your application code
-COPY . .
-
-# Expose the port your app runs on
-EXPOSE 4000
-
-# Start the application
-CMD ["npm", "start"]
+    post {
+        success {
+            echo '🚀 Deployment successful!'
+        }
+        failure {
+            echo '❌ Deployment failed.'
+        }
+    }
+}
